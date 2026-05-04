@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anonymous Wall 🔥</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap');
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: #0a0a0a;
+color: #ddd;
+font-family: ‘IBM Plex Mono’, monospace;
+min-height: 100vh;
+padding-bottom: 90px;
+}
+
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+pointer-events: none;
+z-index: 999;
+}
+
+header {
+position: sticky;
+top: 0;
+z-index: 10;
+background: rgba(10,10,10,0.95);
+backdrop-filter: blur(10px);
+border-bottom: 2px solid #ff2d55;
+padding: 16px 20px;
+display: flex;
+align-items: center;
+gap: 14px;
+}
+
+.dot {
+width: 10px; height: 10px;
+border-radius: 50%;
+background: #ff2d55;
+box-shadow: 0 0 10px #ff2d55;
+animation: pulse 1.5s infinite;
+flex-shrink: 0;
+}
+
+.title {
+font-size: 18px;
+font-weight: 700;
+letter-spacing: 0.3em;
+color: #fff;
+transition: all 0.1s;
+}
+
+.title.glitch {
+color: #ff2d55;
+text-shadow: 2px 0 #0ff, -2px 0 #f0f;
+}
+
+#postCount {
+margin-right: auto;
+font-size: 11px;
+color: #444;
+letter-spacing: 0.1em;
+}
+
+#feed {
+padding: 14px;
+max-width: 680px;
+margin: 0 auto;
+}
+
+.empty {
+text-align: center;
+color: #222;
+margin-top: 80px;
+font-size: 13px;
+letter-spacing: 0.2em;
+line-height: 2.5;
+}
+
+.post {
+background: #0f0f0f;
+border: 1px solid #1a1a1a;
+border-radius: 6px;
+padding: 14px 16px;
+margin-bottom: 10px;
+animation: fadeSlide 0.3s ease forwards;
+transition: border-color 0.2s, background 0.2s;
+}
+
+.post:hover {
+border-color: #ff2d55;
+background: #111;
+}
+
+.post-meta {
+display: flex;
+justify-content: space-between;
+font-size: 11px;
+color: #444;
+margin-bottom: 10px;
+letter-spacing: 0.1em;
+}
+
+.post-author { color: #ff2d55; }
+
+.post-text {
+font-size: 15px;
+line-height: 1.7;
+word-break: break-word;
+white-space: pre-wrap;
+}
+
+.reactions {
+display: flex;
+gap: 7px;
+margin-top: 12px;
+flex-wrap: wrap;
+}
+
+.reaction-btn {
+background: transparent;
+border: 1px solid #1f1f1f;
+border-radius: 20px;
+padding: 3px 11px;
+font-size: 13px;
+cursor: pointer;
+color: #555;
+display: flex;
+align-items: center;
+gap: 5px;
+transition: all 0.15s;
+font-family: inherit;
+}
+
+.reaction-btn:hover {
+border-color: #ff2d55;
+background: rgba(255,45,85,0.1);
+color: #fff;
+}
+
+.reaction-count { font-size: 11px; color: #ff2d55; }
+
+#inputBar {
+position: fixed;
+bottom: 0; left: 0; right: 0;
+background: rgba(10,10,10,0.97);
+border-top: 1px solid #1a1a1a;
+padding: 12px 14px;
+display: flex;
+gap: 10px;
+backdrop-filter: blur(10px);
+z-index: 20;
+}
+
+#textInput {
+flex: 1;
+background: #111;
+border: 1px solid #222;
+border-radius: 5px;
+padding: 11px 14px;
+color: #fff;
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 14px;
+outline: none;
+transition: border-color 0.2s;
+direction: rtl;
+}
+
+#textInput:focus { border-color: #ff2d55; }
+#textInput::placeholder { color: #333; }
+
+#sendBtn {
+background: #ff2d55;
+color: #fff;
+border: none;
+border-radius: 5px;
+padding: 11px 20px;
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 13px;
+font-weight: 700;
+letter-spacing: 0.1em;
+cursor: pointer;
+transition: opacity 0.2s;
+white-space: nowrap;
+}
+
+#sendBtn:disabled { opacity: 0.3; cursor: default; }
+
+@keyframes pulse {
+0%,100% { opacity:1; transform:scale(1); }
+50% { opacity:0.4; transform:scale(0.8); }
+}
+
+@keyframes fadeSlide {
+from { opacity:0; transform:translateY(-8px); }
+to { opacity:1; transform:translateY(0); }
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="dot"></div>
+  <span class="title" id="titleEl">ANONYMOUS WALL</span>
+  <span id="postCount">0 posts</span>
+</header>
+
+<div id="feed">
+  <div class="empty" id="emptyMsg">
+    [ لا توجد رسائل بعد ]<br>
+    <span style="font-size:11px;color:#1a1a1a">كن أول من يتكلم</span>
+  </div>
+</div>
+
+<div id="inputBar">
+  <input id="textInput" placeholder="اكتب شيئاً مجهولاً..." maxlength="280" />
+  <button id="sendBtn" disabled>نشر</button>
+</div>
+
+<script>
+  const EMOJIS = ['🔥','👻','💀','❤️','😂'];
+  const KEY = 'anon_wall_posts';
+
+  let posts = JSON.parse(localStorage.getItem(KEY) || '[]');
+
+  // Glitch title
+  const titleEl = document.getElementById('titleEl');
+  const glitchChars = '!@#$%^&*<>?/\\|~`';
+  function glitch(str) {
+    return str.split('').map(c =>
+      Math.random() < 0.05 ? glitchChars[Math.floor(Math.random()*glitchChars.length)] : c
+    ).join('');
+  }
+  setInterval(() => {
+    titleEl.classList.add('glitch');
+    let n = 0;
+    const t = setInterval(() => {
+      titleEl.textContent = glitch('ANONYMOUS WALL');
+      if (++n > 6) {
+        clearInterval(t);
+        titleEl.textContent = 'ANONYMOUS WALL';
+        titleEl.classList.remove('glitch');
+      }
+    }, 60);
+  }, 3500);
+
+  // Time ago
+  function timeAgo(ts) {
+    const d = Math.floor((Date.now() - ts) / 1000);
+    if (d < 60) return d + 'ث';
+    if (d < 3600) return Math.floor(d/60) + 'د';
+    if (d < 86400) return Math.floor(d/3600) + 'س';
+    return Math.floor(d/86400) + 'ي';
+  }
+
+  function escHtml(str) {
+    return str
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+
+  // Render all posts
+  function render() {
+    const feed = document.getElementById('feed');
+    const empty = document.getElementById('emptyMsg');
+    document.getElementById('postCount').textContent = posts.length + ' posts';
+
+    feed.querySelectorAll('.post').forEach(el => el.remove());
+
+    if (posts.length === 0) { empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    posts.forEach((post, i) => {
+      const card = document.createElement('div');
+      card.className = 'post';
+      card.style.animationDelay = Math.min(i * 0.03, 0.3) + 's';
+      card.style.opacity = '0';
+
+      const ghost = 'GHOST_' + post.id.slice(-4).toUpperCase();
+
+      card.innerHTML = `
+        <div class="post-meta">
+          <span class="post-author">👤 ${ghost}</span>
+          <span>منذ ${timeAgo(post.time)}</span>
+        </div>
+        <div class="post-text">${escHtml(post.text)}</div>
+        <div class="reactions" id="r-${post.id}"></div>
+      `;
+
+      feed.appendChild(card);
+      renderReactions(post);
+    });
+  }
+
+  function renderReactions(post) {
+    const container = document.getElementById('r-' + post.id);
+    if (!container) return;
+    container.innerHTML = '';
+    EMOJIS.forEach(emoji => {
+      const count = (post.reactions && post.reactions[emoji]) || 0;
+      const btn = document.createElement('button');
+      btn.className = 'reaction-btn';
+      btn.innerHTML = emoji + (count > 0 ? ` <span class="reaction-count">${count}</span>` : '');
+      btn.onclick = () => react(post.id, emoji);
+      container.appendChild(btn);
+    });
+  }
+
+  // Send post
+  function sendPost() {
+    const input = document.getElementById('textInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const post = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+      text,
+      time: Date.now(),
+      reactions: {}
+    };
+
+    posts.unshift(post);
+    save();
+    render();
+    input.value = '';
+    document.getElementById('sendBtn').disabled = true;
+  }
+
+  // React
+  function react(id, emoji) {
+    const post = posts.find(p => p.id === id);
+    if (!post) return;
+    if (!post.reactions) post.reactions = {};
+    post.reactions[emoji] = (post.reactions[emoji] || 0) + 1;
+    save();
+    renderReactions(post);
+  }
+
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify(posts));
+  }
+
+  // Events
+  const textInput = document.getElementById('textInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  textInput.addEventListener('input', () => {
+    sendBtn.disabled = textInput.value.trim().length === 0;
+  });
+
+  textInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendPost(); }
+  });
+
+  sendBtn.addEventListener('click', sendPost);
+
+  render();
+</script>
+
+</body>
+</html>
